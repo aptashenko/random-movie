@@ -4,56 +4,89 @@
     <hr class="w-[100%] h-5px" />
     <div class="max-w-[95%] calcWidth  mx-auto bg-white rounded-10px p-20px">
         <div class="flex overflow-x-scroll list">
-            <div v-for="({title, poster_path}, idx) in firstList" class="pic overflow-y-hidden min-h-350px flex flex-col justify-between w-200px flex-shrink-0 item" :key="idx" @click="() => showImg(idx)">
+            <div v-for="({title, poster_path}, idx) in firstList" class="overflow-y-hidden min-h-350px flex flex-col justify-between w-200px flex-shrink-0 item" :key="idx">
                 <img class="rounded-5px cursor-pointer" :src="`https://image.tmdb.org/t/p/w500/${poster_path}`" />
                 <h2 class="font-bold text-12px">{{title}}</h2>
             </div>
         </div>
-        <vue-easy-lightbox :visible="visibleRef" :imgs="imgs" :index="indexRef" @hide="onHide"></vue-easy-lightbox>
+    </div>
+    <div class="flex w-[50%] mx-auto p-20px border-white border-2px rounded-10px">
+        <div>
+            <FormKit type="form" @submit="randomMovie" submit-label="Обрати кіно">
+                <FormKit
+                    type="select"
+                    name="genre"
+                    label="Оберіть жанр"
+                    :options="genres"
+                    />
+                <FormKit
+                    type="select"
+                    name="country"
+                    label="Оберіть країну"
+                    :options="countries"
+                    />
+            </FormKit>
+        </div>
     </div>
 </div>
 </template>
 
 <script>
 import axios from 'axios';
-import { onMounted, reactive, ref } from 'vue';
-import VueEasyLightbox from 'vue-easy-lightbox/dist/external-css/vue-easy-lightbox.esm.min.js'
-import 'vue-easy-lightbox/external-css/vue-easy-lightbox.css'
-
+import { ref, onBeforeMount } from 'vue';
 
 export default {
-    components: {
-    VueEasyLightbox
-  },
     setup() {
         const API_KEY = '64b9d48df1f5249c2e8adb2dbe6fd5f9';
         axios.defaults.baseURL = `https://api.themoviedb.org/3`;
 
         let firstList = ref([]);
-        let page = reactive(1);
+        let genres = ref([]);
+        let countries = ref([]);
 
-        const visibleRef = ref(false)
-        const indexRef = ref(0)
+        let choosenGenre = ref(null)
 
-        const onHide = () => visibleRef.value = false;
-        const showImg = (index) => {
-            indexRef.value = index
-            visibleRef.value = true
-          }
+        onBeforeMount(() => {
+            fetchGenres(API_KEY)
+            fetchPopularMovies(API_KEY)
+            fetchContries(API_KEY)
+            searchMovie(API_KEY)
 
-        onMounted(() => {
-            fetchPopularMovies(API_KEY, page)
         })
 
-        const fetchPopularMovies = async (apiKey, page) => {
-            const resp = await axios.get(`/movie/popular?api_key=${apiKey}&language=ru&page=${page}`);
+        const fetchPopularMovies = async (apiKey) => {
+            const resp = await axios.get(`/movie/popular?api_key=${apiKey}&language=ru`);
             firstList.value = resp.data.results;
         }
 
-        return {firstList, visibleRef, indexRef, onHide, showImg}
+        const fetchGenres = async (apiKey) => {
+            const resp = await axios.get(`/genre/movie/list?api_key=${apiKey}&language=ru`)
+            genres.value = resp.data.genres.map(item => item.name)
+        }
+
+        const fetchContries = async (apiKey) => {
+            const resp = await axios.get(`/configuration/countries?api_key=${apiKey}`)
+            countries.value = resp.data.map(item => item.english_name)
+        }
+
+        const searchMovie = async (apiKey) => {
+            const resp = await axios.get(`/search/movie?&api_key=${apiKey}&language=ru&page=1&region=ireland&year=2022`)
+            console.log(resp)
+        }
+
+        const randomMovie = (value) => {
+            console.log(value)
+        }
+
+        return {
+            firstList, 
+            genres, 
+            choosenGenre, 
+            randomMovie, 
+            countries
+        }
     }
 }
-
 </script>
 
 
@@ -82,4 +115,5 @@ export default {
 .list::-webkit-scrollbar {
     display: none;
 }
+
 </style>
