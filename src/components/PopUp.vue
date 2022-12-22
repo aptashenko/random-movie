@@ -2,24 +2,28 @@
 <transition name="modal">
   <div class="modal-mask">
     <div class="modal-wrapper" @click="closeModal">
-      <div class="modal-container max-w-[50%]">
-        <h2 class="font-bold text-20px text-[#000] mb-10px">
+      <div class="modal-container overflow-scroll w-80vw h-600px md:(w-60vw h-40vw scrollbar-hide)">
+        <h2 class="font-bold text-[#000] text-6vw mb-4vw md:(mb-1.5vw text-2vw)">
           {{movieData.title}}
         </h2>
-        <img class="w-[55%] mx-auto rounded-5px" :src="`https://image.tmdb.org/t/p/w500/${movieData.poster_path}`" />
-        <div class="flex mt-20px">
-            <div class="flex flex-col mr-10px min-w-100px text-left">
-              <p class="font-bold text-1.5vw leading-tight">Жанр:</p>
-              <p class="font-bold my-5px text-1.5vw leading-tight">Дата релізу:</p>
-              <p class="font-bold text-1.5vw leading-tight">Опис:</p>
-            </div>
-            <div class="flex flex-col text-left">
-              <p class="text-1.5vw leading-tight">{{movieGenres}}</p>
-              <p class="text-1.5vw leading-tight my-5px">{{ releaseDate }} <span class="opacity-50 text-14px">({{ dateFromNow }})</span></p>
-              <p class="text-1.5vw leading-tight">{{ movieData.overview ? movieData.overview : 'Опис відсутній у базі' }}</p>
-            </div>
+        <div class="flex w-[100%] flex-col md:flex-row">
+          <img class="mx-auto rounded-5px md:(w-[39%] mr-10px)" :src="`https://image.tmdb.org/t/p/w500/${movieData.poster_path}`" />
+          <div class="flex flex-col mt-3vw md:mt-0">
+              <div class="flex text-left">
+                <p class="font-bold text-3vw min-w-50px w-50px leading-tight md:(min-w-10vw text-1.3vw)">Жанр:</p>
+                <p class="leading-tight text-3vw md:(text-1.2vw)">{{movieGenres}}</p>
+              </div>
+              <div class="flex text-left">
+                <p class="font-bold text-3vw min-w-50px w-50px my-5px leading-tight md:(min-w-10vw text-1.3vw)">Дата релізу:</p>
+                <p class="leading-tight text-3vw my-5px md:(text-1.2vw)">{{ releaseDate }} <span class="opacity-50 text-14px">({{ dateFromNow }})</span></p>
+              </div>
+              <div class="flex text-left">
+                <p class="font-bold text-3vw min-w-50px w-50px leading-tight md:(text-1.3vw min-w-10vw)">Опис:</p>
+                <p class="leading-tight text-3vw md:(text-1.2vw)">{{ movieData.overview ? movieData.overview : 'Опис відсутній у базі' }}</p>
+              </div>
+              <a :href="searchQuery" target="_blank" class="block p-10px border-1px w-200px mx-auto mt-20px transition font-bold hover:(bg-[#000] text-[#fff])">Знайти</a>
+          </div>
         </div>
-        <a :href="searchQuery" target="_blank" class="block p-10px border-1px w-200px mx-auto mt-20px font-bold hover:(bg-[#000] text-[#fff])">Знайти</a>
       </div>
     </div>
   </div>  
@@ -69,6 +73,7 @@ export default {
 </script>
 
 <style>
+
 .modal-mask {
   position: fixed;
   z-index: 9998;

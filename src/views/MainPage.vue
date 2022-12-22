@@ -2,7 +2,7 @@
 <div class="py-20px">
     <h1 class="font-black block pb-20px text-24px text-[#fff]">Популярні фільми</h1>
     <hr class="w-[100%] h-5px" />
-    <UpcomingFilms :upcomingFilms="upcomingFilms" @openMovieData="openMovieData" />
+    <UpcomingFilms v-model:page="page" v-model:upcomingFilms="upcomingFilms" @openMovieData="openMovieData" />
     <MovieFilter :genres="genres" :randomMovie="randomMovie" @selectMovie="selectMovie" @openMovieData="openMovieData" />
     <PopUp v-if="showModal" :genres="genres" :movieData="movieDetails" @close="closeModal" />
 </div>
@@ -17,6 +17,7 @@ export default {
     data() {
         return {
             upcomingFilms: null,
+            page: 1,
             genres: null,
             movieDetails: null,
             randomMovie: null,
@@ -45,9 +46,15 @@ export default {
             this.showModal = true;
         },
     },
-
+    watch: {
+        page() {
+            fectchUpcomingFilms(this.page).then(resp => {
+                this.upcomingFilms = resp.data.results
+            })
+        }
+    },
     mounted() {
-        fectchUpcomingFilms().then(resp => {
+        fectchUpcomingFilms(this.page).then(resp => {
             this.upcomingFilms = resp.data.results
         })
         fetchGenres().then(resp => {

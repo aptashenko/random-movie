@@ -5,8 +5,8 @@ axios.defaults.baseURL = 'https://api.themoviedb.org/3';
 const API_KEY = '64b9d48df1f5249c2e8adb2dbe6fd5f9';
 const LANG = 'ru';
 
-export async function fectchUpcomingFilms() {
-    return await axios.get(`/movie/upcoming?api_key=${API_KEY}&language=${LANG}&page=1`);
+export async function fectchUpcomingFilms(page) {
+    return await axios.get(`/movie/upcoming?api_key=${API_KEY}&language=${LANG}&page=${page}`);
 }
 
 export async function fetchGenres() {
